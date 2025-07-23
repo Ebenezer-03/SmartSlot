@@ -1,6 +1,9 @@
 # SmartSlot
 A Smart AI-Powered Hosipital Queue Management System
+
+
 **How to run it(Steps and Installtion)**
+
 **Tech stack used
 
 Features implemented
