@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Shield, Phone, Hash } from 'lucide-react';
+import { User, Shield, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,34 +11,87 @@ import { toast } from '@/hooks/use-toast';
 
 const Login = () => {
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
+
+  // State for SignUp tab
+  const [signUpFormData, setSignUpFormData] = useState({
     name: '',
     phone: '',
-    dob: '', // changed from aadhaar to dob
+    dob: '',
     otp: '',
+    email: ''
   });
-  const [otpSent, setOtpSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [signUpOtpSent, setSignUpOtpSent] = useState(false);
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  // State for Patient Login tab
+  const [patientLoginFormData, setPatientLoginFormData] = useState({
+    identifier: '', // Can be email or phone
+    otp: ''
+  });
+  const [patientLoginOtpSent, setPatientLoginOtpSent] = useState(false);
+  const [patientLoginLoading, setPatientLoginLoading] = useState(false);
+  const [isPatientEmailLogin, setIsPatientEmailLogin] = useState(false); // To track if patient login is by email or phone
+
+  // State for Staff Login tab
+  const [staffLoginFormData, setStaffLoginFormData] = useState({
+    email: '',
+    password: '',
+    otp: ''
+  });
+  const [staffLoginOtpSent, setStaffLoginOtpSent] = useState(false);
+  const [staffLoginLoading, setStaffLoginLoading] = useState(false);
+
+
+  // Handle input change for SignUp tab
+  const handleSignUpInputChange = (field: string, value: string) => {
+    setSignUpFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const sendOTP = async () => {
-    if (!formData.phone || formData.phone.length !== 10) {
+  // Handle input change for Patient Login tab
+  const handlePatientLoginInputChange = (field: string, value: string) => {
+    setPatientLoginFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle input change for Staff Login tab
+  const handleStaffLoginInputChange = (field: string, value: string) => {
+    setStaffLoginFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Send OTP for SignUp tab
+  const sendSignUpOTP = async () => {
+    // Basic validation for phone number
+    if (!signUpFormData.phone || signUpFormData.phone.length !== 10 || isNaN(Number(signUpFormData.phone))) {
       toast({
         title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number",
+        description: "Please enter a valid 10-digit phone number for signup.",
         variant: "destructive",
       });
       return;
     }
+    // Basic validation for email
+    if (!signUpFormData.email || !/\S+@\S+\.\S+/.test(signUpFormData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address for signup.",
+        variant: "destructive",
+      });
+      return;
+    }
+    // Basic validation for name and dob
+    if (!signUpFormData.name || !signUpFormData.dob) {
+        toast({
+            title: "Missing Information",
+            description: "Please fill in your full name and date of birth for signup.",
+            variant: "destructive",
+        });
+        return;
+    }
 
-    setLoading(true);
+    setSignUpLoading(true);
     // Simulate OTP sending
     setTimeout(() => {
-      setOtpSent(true);
-      setLoading(false);
+      setSignUpOtpSent(true);
+      setSignUpLoading(false);
       toast({
         title: "OTP Sent Successfully",
         description: "Please check your mobile for the verification code. Demo OTP: 123456",
@@ -46,8 +99,9 @@ const Login = () => {
     }, 1500);
   };
 
-  const verifyOTP = async () => {
-    if (formData.otp !== '123456') {
+  // Verify OTP for SignUp tab
+  const verifySignUpOTP = async () => {
+    if (signUpFormData.otp !== '123456') {
       toast({
         title: "Invalid OTP",
         description: "Please enter the correct OTP. Demo OTP: 123456",
@@ -58,40 +112,152 @@ const Login = () => {
 
     const userData = {
       id: `user_${Date.now()}`,
-      name: formData.name,
-      phone: formData.phone,
-      dob: formData.dob, // changed from aadhaar to dob
+      name: signUpFormData.name,
+      phone: signUpFormData.phone,
+      dob: signUpFormData.dob,
+      email: signUpFormData.email,
       type: 'patient' as const,
     };
 
     login(userData);
     toast({
-      title: "Login Successful",
+      title: "Signup & Login Successful",
       description: "Welcome to SmartSlot!",
     });
   };
 
-  const demoLogin = (type: 'patient' | 'staff') => {
+  // Send OTP for Patient Login tab
+  const sendPatientLoginOTP = async () => {
+    const identifier = patientLoginFormData.identifier;
+    const isEmail = identifier.includes('@');
+
+    if (isEmail) {
+      if (!identifier || !/\S+@\S+\.\S+/.test(identifier)) {
+        toast({
+          title: "Invalid Email",
+          description: "Please enter a valid email address.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setIsPatientEmailLogin(true);
+    } else {
+      if (!identifier || identifier.length !== 10 || isNaN(Number(identifier))) {
+        toast({
+          title: "Invalid Phone Number",
+          description: "Please enter a valid 10-digit phone number.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setIsPatientEmailLogin(false);
+    }
+
+    setPatientLoginLoading(true);
+    // Simulate OTP sending
+    setTimeout(() => {
+      setPatientLoginOtpSent(true);
+      setPatientLoginLoading(false);
+      toast({
+        title: "OTP Sent Successfully",
+        description: `Please check your ${isEmail ? 'email' : 'mobile'} for the verification code. Demo OTP: 123456`,
+      });
+    }, 1500);
+  };
+
+  // Verify OTP for Patient Login tab
+  const verifyPatientLoginOTP = async () => {
+    if (patientLoginFormData.otp !== '123456') {
+      toast({
+        title: "Invalid OTP",
+        description: "Please enter the correct OTP. Demo OTP: 123456",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate fetching user data based on identifier
     const userData = {
-      id: `demo_${type}_${Date.now()}`,
-      name: type === 'patient' ? 'Demo Patient' : 'Dr. Demo Staff',
-      phone: '9876543210',
-      type,
+      id: `patient_${Date.now()}`,
+      name: 'Logged-in Patient', // Placeholder name for login flow
+      phone: isPatientEmailLogin ? '' : patientLoginFormData.identifier, // Set phone if it was a phone login
+      email: isPatientEmailLogin ? patientLoginFormData.identifier : '', // Set email if it was an email login
+      type: 'patient' as const,
+      dob: '' // DOB is not collected in this login flow
     };
 
-    login(userData);
+    login(userData); // This should trigger navigation to patient dashboard in a real app
     toast({
-      title: "Demo Login Successful",
-      description: `Logged in as ${type === 'patient' ? 'Patient' : 'Hospital Staff'}`,
+      title: "Login Successful",
+      description: "Redirecting to Patient Dashboard!",
     });
   };
+
+  // Send OTP for Staff Login tab (after email & password)
+  const sendStaffLoginOTP = async () => {
+    if (!staffLoginFormData.email || !/\S+@\S+\.\S+/.test(staffLoginFormData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!staffLoginFormData.password) {
+      toast({
+        title: "Missing Password",
+        description: "Please enter your password.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setStaffLoginLoading(true);
+    // Simulate OTP sending
+    setTimeout(() => {
+      setStaffLoginOtpSent(true);
+      setStaffLoginLoading(false);
+      toast({
+        title: "OTP Sent Successfully",
+        description: `Please check your email for the verification code. Demo OTP: 123456`,
+      });
+    }, 1500);
+  };
+
+  // Verify OTP for Staff Login tab
+  const verifyStaffLoginOTP = async () => {
+    if (staffLoginFormData.otp !== '123456') {
+      toast({
+        title: "Invalid OTP",
+        description: "Please enter the correct OTP. Demo OTP: 123456",
+        variant: "destructive",
+      });
+      return;
+    }
+    // Simulate fetching staff data based on email
+    const userData = {
+      id: `staff_${Date.now()}`,
+      name: 'Logged-in Staff',
+      phone: '',
+      email: staffLoginFormData.email,
+      type: 'staff' as const,
+      dob: ''
+    };
+    login(userData);
+    toast({
+      title: "Login Successful",
+      description: "Redirecting to Staff Dashboard!",
+    });
+    // Simulate navigation (replace with your router logic if needed)
+    window.location.href = '/staff-dashboard';
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/20 to-accent/10 flex items-center justify-center p-4">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      
+
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -112,86 +278,85 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="aadhaar" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="aadhaar">Login</TabsTrigger>
-                <TabsTrigger value="demo">Sign Up</TabsTrigger>
+            <Tabs defaultValue="signup" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="patientLogin">Patient Login</TabsTrigger>
+                <TabsTrigger value="staffLogin">Staff Login</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="aadhaar" className="space-y-4">
-                {!otpSent ? (
+              {/* Sign Up Tab Content */}
+              <TabsContent value="signup" className="space-y-4">
+                {!signUpOtpSent ? (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="flex items-center gap-2">
+                      <Label htmlFor="signup-name" className="flex items-center gap-2">
                         <User className="h-4 w-4" />
                         Full Name
                       </Label>
                       <Input
-                        id="name"
+                        id="signup-name"
                         placeholder="Enter your full name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        value={signUpFormData.name}
+                        onChange={(e) => handleSignUpInputChange('name', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="dob" className="flex items-center gap-2">
+                      <Label htmlFor="signup-dob" className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
                         Date of Birth
                       </Label>
                       <Input
-                        id="dob"
-                        type="date" // changed from text to date
-                        placeholder="Enter Your Date of Birth"
-                        value={formData.dob}
-                        onChange={(e) => handleInputChange('dob', e.target.value)}
+                        id="signup-dob"
+                        type="date"
+                        value={signUpFormData.dob}
+                        onChange={(e) => handleSignUpInputChange('dob', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Label htmlFor="signup-phone" className="flex items-center gap-2">
                         <Phone className="h-4 w-4" />
                         Mobile Number
                       </Label>
                       <Input
-                        id="phone"
+                        id="signup-phone"
                         placeholder="Enter 10-digit mobile number"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        value={signUpFormData.phone}
+                        onChange={(e) => handleSignUpInputChange('phone', e.target.value)}
                         maxLength={10}
                       />
                     </div>
 
-                     <div className="space-y-2">
-                      <Label htmlFor="Email" className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
                         Email Id
                       </Label>
                       <Input
-                        id="phone"
+                        id="signup-email"
                         placeholder="Enter your Email address"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        maxLength={10}
+                        value={signUpFormData.email}
+                        onChange={(e) => handleSignUpInputChange('email', e.target.value)}
+                        type="email"
                       />
                     </div>
 
-                    
-
-                    <Button 
-                      onClick={sendOTP} 
-                      disabled={loading || !formData.name || !formData.phone}
+                    <Button
+                      onClick={sendSignUpOTP}
+                      disabled={signUpLoading || !signUpFormData.name || !signUpFormData.phone || !signUpFormData.dob || !signUpFormData.email}
                       className="w-full"
                       size="lg"
                     >
-                      {loading ? 'Sending OTP...' : 'Send OTP'}
+                      {signUpLoading ? 'Sending OTP...' : 'Send OTP'}
                     </Button>
                   </>
                 ) : (
                   <>
                     <div className="text-center p-4 bg-accent/10 rounded-lg">
                       <p className="text-sm text-muted-foreground">
-                        OTP sent to +91 {formData.phone}
+                        OTP sent to +91 {signUpFormData.phone}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Demo OTP: <strong>123456</strong>
@@ -199,28 +364,28 @@ const Login = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="otp">Enter 6-digit OTP</Label>
+                      <Label htmlFor="signup-otp">Enter 6-digit OTP</Label>
                       <Input
-                        id="otp"
+                        id="signup-otp"
                         placeholder="123456"
-                        value={formData.otp}
-                        onChange={(e) => handleInputChange('otp', e.target.value)}
+                        value={signUpFormData.otp}
+                        onChange={(e) => handleSignUpInputChange('otp', e.target.value)}
                         maxLength={6}
                         className="text-center text-lg font-mono tracking-widest"
                       />
                     </div>
 
                     <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setOtpSent(false)}
+                      <Button
+                        variant="outline"
+                        onClick={() => setSignUpOtpSent(false)}
                         className="flex-1"
                       >
                         Back
                       </Button>
-                      <Button 
-                        onClick={verifyOTP}
-                        disabled={formData.otp.length !== 6}
+                      <Button
+                        onClick={verifySignUpOTP}
+                        disabled={signUpFormData.otp.length !== 6}
                         className="flex-1"
                       >
                         Verify OTP
@@ -230,32 +395,154 @@ const Login = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="demo" className="space-y-4">
-                <div className="text-center text-sm text-muted-foreground mb-4">
-                  Quick access for demonstration
-                </div>
-                
-                <div className="space-y-3">
-                  <Button
-                    onClick={() => demoLogin('patient')}
-                    variant="outline"
-                    className="w-full justify-start"
-                    size="lg"
-                  >
-                    <User className="h-5 w-5 mr-3" />
-                    Login as Patient
-                  </Button>
-                  
-                  <Button
-                    onClick={() => demoLogin('staff')}
-                    variant="medical"
-                    className="w-full justify-start"
-                    size="lg"
-                  >
-                    <Shield className="h-5 w-5 mr-3" />
-                    Login as Hospital Staff
-                  </Button>
-                </div>
+              {/* Patient Login Tab Content */}
+              <TabsContent value="patientLogin" className="space-y-4">
+                {!patientLoginOtpSent ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="patient-identifier" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" /> / <Phone className="h-4 w-4" />
+                        Email or Mobile Number
+                      </Label>
+                      <Input
+                        id="patient-identifier"
+                        placeholder="Enter your email or 10-digit mobile number"
+                        value={patientLoginFormData.identifier}
+                        onChange={(e) => handlePatientLoginInputChange('identifier', e.target.value)}
+                        type="text"
+                      />
+                    </div>
+
+                    <Button
+                      onClick={sendPatientLoginOTP}
+                      disabled={patientLoginLoading || !patientLoginFormData.identifier}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {patientLoginLoading ? 'Sending OTP...' : 'Send OTP'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center p-4 bg-accent/10 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        OTP sent to {patientLoginFormData.identifier}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Demo OTP: <strong>123456</strong>
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="patient-otp">Enter 6-digit OTP</Label>
+                      <Input
+                        id="patient-otp"
+                        placeholder="123456"
+                        value={patientLoginFormData.otp}
+                        onChange={(e) => handlePatientLoginInputChange('otp', e.target.value)}
+                        maxLength={6}
+                        className="text-center text-lg font-mono tracking-widest"
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setPatientLoginOtpSent(false)}
+                        className="flex-1"
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        onClick={verifyPatientLoginOTP}
+                        disabled={patientLoginFormData.otp.length !== 6}
+                        className="flex-1"
+                      >
+                        Login
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </TabsContent>
+
+              {/* Staff Login Tab Content */}
+              <TabsContent value="staffLogin" className="space-y-4">
+                {!staffLoginOtpSent ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="staff-email" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email
+                      </Label>
+                      <Input
+                        id="staff-email"
+                        placeholder="Enter your email address"
+                        value={staffLoginFormData.email}
+                        onChange={(e) => handleStaffLoginInputChange('email', e.target.value)}
+                        type="email"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="staff-password" className="flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Password
+                      </Label>
+                      <Input
+                        id="staff-password"
+                        placeholder="Enter your password"
+                        value={staffLoginFormData.password}
+                        onChange={(e) => handleStaffLoginInputChange('password', e.target.value)}
+                        type="password"
+                      />
+                    </div>
+                    <Button
+                      onClick={sendStaffLoginOTP}
+                      disabled={staffLoginLoading || !staffLoginFormData.email || !staffLoginFormData.password}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {staffLoginLoading ? 'Sending OTP...' : 'Generate OTP'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center p-4 bg-accent/10 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        OTP sent to {staffLoginFormData.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Demo OTP: <strong>123456</strong>
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="staff-otp">Enter 6-digit OTP</Label>
+                      <Input
+                        id="staff-otp"
+                        placeholder="123456"
+                        value={staffLoginFormData.otp}
+                        onChange={(e) => handleStaffLoginInputChange('otp', e.target.value)}
+                        maxLength={6}
+                        className="text-center text-lg font-mono tracking-widest"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setStaffLoginOtpSent(false)}
+                        className="flex-1"
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        onClick={verifyStaffLoginOTP}
+                        disabled={staffLoginFormData.otp.length !== 6}
+                        className="flex-1"
+                      >
+                        Login
+                      </Button>
+                    </div>
+                  </>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
