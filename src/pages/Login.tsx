@@ -14,7 +14,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    aadhaar: '',
+    dob: '', // changed from aadhaar to dob
     otp: '',
   });
   const [otpSent, setOtpSent] = useState(false);
@@ -60,7 +60,7 @@ const Login = () => {
       id: `user_${Date.now()}`,
       name: formData.name,
       phone: formData.phone,
-      aadhaar: formData.aadhaar,
+      dob: formData.dob, // changed from aadhaar to dob
       type: 'patient' as const,
     };
 
@@ -114,8 +114,8 @@ const Login = () => {
           <CardContent>
             <Tabs defaultValue="aadhaar" className="space-y-4">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="aadhaar">Aadhaar Login</TabsTrigger>
-                <TabsTrigger value="demo">Demo Login</TabsTrigger>
+                <TabsTrigger value="aadhaar">Login</TabsTrigger>
+                <TabsTrigger value="demo">Sign Up</TabsTrigger>
               </TabsList>
 
               <TabsContent value="aadhaar" className="space-y-4">
@@ -135,6 +135,20 @@ const Login = () => {
                     </div>
 
                     <div className="space-y-2">
+                      <Label htmlFor="dob" className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
+                        Date of Birth
+                      </Label>
+                      <Input
+                        id="dob"
+                        type="date" // changed from text to date
+                        placeholder="Enter Your Date of Birth"
+                        value={formData.dob}
+                        onChange={(e) => handleInputChange('dob', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="phone" className="flex items-center gap-2">
                         <Phone className="h-4 w-4" />
                         Mobile Number
@@ -148,19 +162,21 @@ const Login = () => {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="aadhaar" className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
-                        Aadhaar Number (Optional)
+                     <div className="space-y-2">
+                      <Label htmlFor="Email" className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>
+                        Email Id
                       </Label>
                       <Input
-                        id="aadhaar"
-                        placeholder="Enter 12-digit Aadhaar number"
-                        value={formData.aadhaar}
-                        onChange={(e) => handleInputChange('aadhaar', e.target.value)}
-                        maxLength={12}
+                        id="phone"
+                        placeholder="Enter your Email address"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        maxLength={10}
                       />
                     </div>
+
+                    
 
                     <Button 
                       onClick={sendOTP} 
