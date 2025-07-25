@@ -12,6 +12,8 @@ import StaffDashboard from "./pages/StaffDashboard";
 import TriageForm from "./pages/TriageForm";
 import NotFound from "./pages/NotFound";
 import ScheduleAppointment from "./pages/ScheduleAppointment";
+import BookAppointment from "./pages/BookAppointment";
+import DoctorUnavailable from "./pages/DoctorUnavailable";
 
 const queryClient = new QueryClient();
 
@@ -73,7 +75,9 @@ const AppRoutes = () => {
           )
         } 
       />
-      <Route path="/ScheduleAppointment" element={<ScheduleAppointment />} />
+      <Route path="/schedule-appointment" element={<ScheduleAppointment />} />
+      <Route path="/book/:id" element={<BookAppointment />} />
+      <Route path="/unavailable/:id" element={<DoctorUnavailable />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

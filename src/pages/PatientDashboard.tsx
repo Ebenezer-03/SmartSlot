@@ -21,7 +21,7 @@ import { EmergencyBanner } from '@/components/EmergencyBanner';
 import { ChatBot } from '@/components/ChatBot';
 import { QRScanner } from '@/components/QRScanner';
 import { toast } from '@/hooks/use-toast';
-import {ScheduleAppointment} from '@/components/ScheduleAppointment';
+import ScheduleAppointment from '@/pages/ScheduleAppointment';
 
 const PatientDashboard = () => {
   const { user, logout } = useAuth();
@@ -232,7 +232,7 @@ const PatientDashboard = () => {
           <Button 
   variant="outline" 
   size="lg" 
-  onClick={() => navigate('/ScheduleAppointment')}
+  onClick={() => navigate('/schedule-appointment')}
   className="h-16"
 >
   <Calendar className="h-5 w-5 mr-3" />

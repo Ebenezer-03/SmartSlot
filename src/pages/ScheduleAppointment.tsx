@@ -1,7 +1,19 @@
 import React from "react";
 import { doctors } from "@/lib/doctors";
+import { useNavigate } from "react-router-dom";
 
 const ScheduleAppointment = () => {
+  const navigate = useNavigate();
+
+  const handleCardClick = (doctorId: number) => {
+    const isAvailable = doctorId % 2 === 0; // Example logic: even IDs are available
+    if (isAvailable) {
+      navigate(`/book/${doctorId}`);
+    } else {
+      navigate(`/unavailable/${doctorId}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#d0f1ff] to-[#e0f7ff] p-6">
       <h1 className="text-4xl font-bold text-center text-blue-800 mb-10 drop-shadow-sm">
@@ -12,13 +24,17 @@ const ScheduleAppointment = () => {
         {doctors.map((doc) => (
           <div
             key={doc.id}
-            className="backdrop-blur-md bg-white/50 border border-blue-100 shadow-lg rounded-3xl p-6 transition-all hover:scale-[1.02]"
+            onClick={() => handleCardClick(doc.id)}
+            className="cursor-pointer backdrop-blur-md bg-white/50 border border-blue-100 shadow-lg rounded-3xl p-6 transition-all hover:scale-[1.02]"
           >
             <div className="flex items-center gap-5 mb-4">
               <img
                 src={doc.profileImage}
                 alt={doc.name}
                 className="w-16 h-16 rounded-full border-4 border-blue-200 shadow-md"
+                onError={(e) =>
+                  (e.currentTarget.src = "https://via.placeholder.com/80?text=Dr")
+                }
               />
               <div>
                 <h2 className="text-xl font-semibold text-blue-800">
