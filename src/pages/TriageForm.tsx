@@ -29,6 +29,7 @@ const TriageForm = () => {
     medications: [],
     allergies: [],
     emergencyContacts: [{ name: '', phone: '' }],
+    otherSymptom: '', // <-- add this
   });
 
   const commonSymptoms = [
@@ -49,7 +50,10 @@ const TriageForm = () => {
   const handleSubmit = () => {
     if (!user) return;
 
-    if (triageData.symptoms.length === 0) {
+    if (
+      triageData.symptoms.length === 0 &&
+      (!triageData.otherSymptom || !triageData.otherSymptom.trim())
+    ) {
       toast({
         title: "Please select symptoms",
         description: "You must select at least one symptom to continue.",
@@ -104,7 +108,7 @@ const TriageForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="temperature">Body Temperature (°F) - Optional</Label>
+                <Label htmlFor="temperature">Body Temperature (°F) - Optional </Label>
                 <div className="flex items-center gap-2">
                   <Thermometer className="h-4 w-4 text-muted-foreground" />
                   <Input
@@ -123,15 +127,7 @@ const TriageForm = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="bp">Blood Pressure - Optional</Label>
-                <Input
-                  id="bp"
-                  placeholder="120/80"
-                  value={triageData.bloodPressure || ''}
-                  onChange={(e) => setTriageData(prev => ({ ...prev, bloodPressure: e.target.value }))}
-                />
-              </div>
+              
             </div>
           </div>
         );
@@ -165,24 +161,12 @@ const TriageForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pain-level">Pain Level (0-10)</Label>
-                <div className="px-4">
-                  <Slider
-                    value={[triageData.painLevel]}
-                    onValueChange={(value) => setTriageData(prev => ({ ...prev, painLevel: value[0] }))}
-                    max={10}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>No Pain</span>
-                    <span className="font-medium">{triageData.painLevel}/10</span>
-                    <span>Severe Pain</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
+                <Input
+                  className='placeholder-black-500'
+                  placeholder='Others'
+                  value={triageData.otherSymptom}
+                  onChange={e => setTriageData(prev => ({ ...prev, otherSymptom: e.target.value }))}
+                />
                 <Label htmlFor="duration">How long have you had these symptoms?</Label>
                 <Select onValueChange={(value) => setTriageData(prev => ({ ...prev, duration: value }))}>
                   <SelectTrigger>
@@ -198,6 +182,7 @@ const TriageForm = () => {
                     <SelectItem value="months">Months</SelectItem>
                   </SelectContent>
                 </Select>
+                
               </div>
             </div>
           </div>
@@ -271,7 +256,7 @@ const TriageForm = () => {
                 <Label htmlFor="emergency-name">Contact Name</Label>
                 <Input
                   id="emergency-name"
-                  placeholder="Full name of emergency contact"
+                  placeholder="Full name"
                   value={triageData.emergencyContacts[0]?.name || ''}
                   onChange={(e) => setTriageData(prev => ({
                     ...prev,
@@ -287,7 +272,7 @@ const TriageForm = () => {
                 <Label htmlFor="emergency-phone">Contact Phone</Label>
                 <Input
                   id="emergency-phone"
-                  placeholder="10-digit phone number"
+                  placeholder="Contact Number"
                   value={triageData.emergencyContacts[0]?.phone || ''}
                   onChange={(e) => setTriageData(prev => ({
                     ...prev,
@@ -304,8 +289,11 @@ const TriageForm = () => {
                 <h3 className="font-medium mb-2">Review Your Information</h3>
                 <div className="text-sm space-y-1 text-muted-foreground">
                   <p>Age: {triageData.age} years</p>
-                  <p>Symptoms: {triageData.symptoms.join(', ') || 'None selected'}</p>
-                  <p>Pain Level: {triageData.painLevel}/10</p>
+                  <p>Symptoms: {[
+                    ...triageData.symptoms,
+                    triageData.otherSymptom && triageData.otherSymptom.trim()
+                  ].filter(Boolean).join(', ') || 'None selected'}
+                  </p>
                   <p>Duration: {triageData.duration || 'Not specified'}</p>
                 </div>
               </div>

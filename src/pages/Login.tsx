@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, HeartPulse, Phone, Mail, Shield } from 'lucide-react';
+import { User, Hospital, Phone, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,10 +17,8 @@ const Login = () => {
     name: '',
     phone: '',
     dob: '',
-    otp: '',
     email: ''
   });
-  const [signUpOtpSent, setSignUpOtpSent] = useState(false);
   const [signUpLoading, setSignUpLoading] = useState(false);
 
   // State for Patient Login tab
@@ -57,8 +55,8 @@ const Login = () => {
     setStaffLoginFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Send OTP for SignUp tab
-  const sendSignUpOTP = async () => {
+  // Sign Up handler (no OTP)
+  const handleSignUp = async () => {
     // Basic validation for phone number
     if (!signUpFormData.phone || signUpFormData.phone.length !== 10 || isNaN(Number(signUpFormData.phone))) {
       toast({
@@ -79,51 +77,30 @@ const Login = () => {
     }
     // Basic validation for name and dob
     if (!signUpFormData.name || !signUpFormData.dob) {
-        toast({
-            title: "Missing Information",
-            description: "Please fill in your full name and date of birth for signup.",
-            variant: "destructive",
-        });
-        return;
-    }
-
-    setSignUpLoading(true);
-    // Simulate OTP sending
-    setTimeout(() => {
-      setSignUpOtpSent(true);
-      setSignUpLoading(false);
       toast({
-        title: "OTP Sent Successfully",
-        description: "Please check your mobile for the verification code. Demo OTP: 123456",
-      });
-    }, 1500);
-  };
-
-  // Verify OTP for SignUp tab
-  const verifySignUpOTP = async () => {
-    if (signUpFormData.otp !== '123456') {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter the correct OTP. Demo OTP: 123456",
+        title: "Missing Information",
+        description: "Please fill in your full name and date of birth for signup.",
         variant: "destructive",
       });
       return;
     }
-
-    const userData = {
-      id: `user_${Date.now()}`,
-      name: signUpFormData.name,
-      phone: signUpFormData.phone,
-      dob: signUpFormData.dob,
-      email: signUpFormData.email,
-      type: 'patient' as const,
-    };
-
-    login(userData);
-    toast({
-      title: "Signup & Login Successful",
-      description: "Welcome to SmartSlot!",
-    });
+    setSignUpLoading(true);
+    setTimeout(() => {
+      setSignUpLoading(false);
+      const userData = {
+        id: `user_${Date.now()}`,
+        name: signUpFormData.name,
+        phone: signUpFormData.phone,
+        dob: signUpFormData.dob,
+        email: signUpFormData.email,
+        type: 'patient' as const,
+      };
+      login(userData);
+      toast({
+        title: "Signup & Login Successful",
+        description: "Welcome to SmartSlot!",
+      });
+    }, 1200);
   };
 
   // Send OTP for Patient Login tab
@@ -262,7 +239,7 @@ const Login = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
-            <HeartPulse className="h-8 w-8 text-white" />
+            <Hospital className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             SmartSlot
@@ -287,112 +264,70 @@ const Login = () => {
 
               {/* Sign Up Tab Content */}
               <TabsContent value="signup" className="space-y-4">
-                {!signUpOtpSent ? (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-name" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Full Name
-                      </Label>
-                      <Input
-                        id="signup-name"
-                        placeholder="Enter your full name"
-                        value={signUpFormData.name}
-                        onChange={(e) => handleSignUpInputChange('name', e.target.value)}
-                      />
-                    </div>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-name" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Full Name
+                    </Label>
+                    <Input
+                      id="signup-name"
+                      placeholder="Enter your full name"
+                      value={signUpFormData.name}
+                      onChange={(e) => handleSignUpInputChange('name', e.target.value)}
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-dob" className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
-                        Date of Birth
-                      </Label>
-                      <Input
-                        id="signup-dob"
-                        type="date"
-                        value={signUpFormData.dob}
-                        onChange={(e) => handleSignUpInputChange('dob', e.target.value)}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-dob" className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
+                      Date of Birth
+                    </Label>
+                    <Input
+                      id="signup-dob"
+                      type="date"
+                      value={signUpFormData.dob}
+                      onChange={(e) => handleSignUpInputChange('dob', e.target.value)}
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-phone" className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        Mobile Number
-                      </Label>
-                      <Input
-                        id="signup-phone"
-                        placeholder="Enter 10-digit mobile number"
-                        value={signUpFormData.phone}
-                        onChange={(e) => handleSignUpInputChange('phone', e.target.value)}
-                        maxLength={10}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Mobile Number
+                    </Label>
+                    <Input
+                      id="signup-phone"
+                      placeholder="Enter 10-digit mobile number"
+                      value={signUpFormData.phone}
+                      onChange={(e) => handleSignUpInputChange('phone', e.target.value)}
+                      maxLength={10}
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        Email Id
-                      </Label>
-                      <Input
-                        id="signup-email"
-                        placeholder="Enter your Email address"
-                        value={signUpFormData.email}
-                        onChange={(e) => handleSignUpInputChange('email', e.target.value)}
-                        type="email"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Id
+                    </Label>
+                    <Input
+                      id="signup-email"
+                      placeholder="Enter your Email address"
+                      value={signUpFormData.email}
+                      onChange={(e) => handleSignUpInputChange('email', e.target.value)}
+                      type="email"
+                    />
+                  </div>
 
-                    <Button
-                      onClick={sendSignUpOTP}
-                      disabled={signUpLoading || !signUpFormData.name || !signUpFormData.phone || !signUpFormData.dob || !signUpFormData.email}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {signUpLoading ? 'Sending OTP...' : 'Send OTP'}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-center p-4 bg-accent/10 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        OTP sent to +91 {signUpFormData.phone}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Demo OTP: <strong>123456</strong>
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-otp">Enter 6-digit OTP</Label>
-                      <Input
-                        id="signup-otp"
-                        placeholder="123456"
-                        value={signUpFormData.otp}
-                        onChange={(e) => handleSignUpInputChange('otp', e.target.value)}
-                        maxLength={6}
-                        className="text-center text-lg font-mono tracking-widest"
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setSignUpOtpSent(false)}
-                        className="flex-1"
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        onClick={verifySignUpOTP}
-                        disabled={signUpFormData.otp.length !== 6}
-                        className="flex-1"
-                      >
-                        Verify OTP
-                      </Button>
-                    </div>
-                  </>
-                )}
+                  <Button
+                    onClick={handleSignUp}
+                    disabled={signUpLoading || !signUpFormData.name || !signUpFormData.phone || !signUpFormData.dob || !signUpFormData.email}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {signUpLoading ? 'Signing Up...' : 'Sign Up'}
+                  </Button>
+                </>
               </TabsContent>
 
               {/* Patient Login Tab Content */}
@@ -501,7 +436,7 @@ const Login = () => {
                       className="w-full"
                       size="lg"
                     >
-                      {staffLoginLoading ? 'Sending OTP...' : 'Generate OTP'}
+                      {staffLoginLoading ? 'Sending OTP...' : 'Send OTP'}
                     </Button>
                   </>
                 ) : (

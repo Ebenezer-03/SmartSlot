@@ -152,7 +152,11 @@ const PatientDashboard = () => {
               <div className="mt-6 p-4 bg-secondary/50 rounded-lg">
                 <h4 className="font-medium mb-2">Visit Summary</h4>
                 <div className="text-sm space-y-1 text-muted-foreground">
-                  <p>Symptoms: {userPatient.symptoms}</p>
+                  <p>
+                    Symptoms: {[...userPatient.triageData.symptoms, userPatient.triageData.otherSymptom?.trim()]
+                      .filter(Boolean)
+                      .join(', ') || 'None selected'}
+                  </p>
                   <p>Check-in: {userPatient.checkinTime.toLocaleTimeString()}</p>
                   <p>Emergency Contact: {userPatient.triageData.emergencyContacts[0]?.name}</p>
                 </div>

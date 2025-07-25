@@ -32,6 +32,7 @@ export interface TriageData {
   medications: string[];
   allergies: string[];
   emergencyContacts: { name: string; phone: string }[];
+  otherSymptom?: string;
 }
 
 export interface QueueData {
