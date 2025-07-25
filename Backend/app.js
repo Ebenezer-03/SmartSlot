@@ -3,6 +3,7 @@ const app = express();
 const createhealthassessment = require('./routes/task');
 const createsymptomsassessment= require('./routes/task');
 const createmedicalhistory = require('./routes/task');
+const createcontact= require('./routes/task')
 const connectDB = require('./db/connect');
 require('dotenv').config();
 const notFound = require('./middleware/not-found');
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/v1/tasks', createhealthassessment);
 app.use('/api/v1/tasks',createsymptomsassessment);
 app.use('/api/v1/tasks',createmedicalhistory);
+app.use('/api/v1/tasks',createcontact)
 
 
 app.use(notFound);

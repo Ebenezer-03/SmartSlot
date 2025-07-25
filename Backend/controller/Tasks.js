@@ -1,6 +1,7 @@
 const basicinfo = require('../models/Task');
 const symptoms =require('../models/Task');
 const medicalhistory=require('../models/Task')
+const contact = require('../models/Task')
 const asyncWrapper = require('../middleware/async')
 const { createCustomError } = require('../errors/custom-error')
 
@@ -20,9 +21,14 @@ const createmedicalhistory =asyncWrapper(async(req,res)=>{
     const Medicalhistory=await medicalhistory.create(req.body)
     res.status(201).json({Medicalhistory})
 })
+const createcontact=asyncWrapper(async(req,res)=>{
+    const Contact= await contact.create(req.body)
+    res.status(201).json({Contact})
+})
 module.exports = {
     createhealthassessment,
     getallhealthassessment,
     createsymptomsassessment,
     createmedicalhistory,
+    createcontact,
 }

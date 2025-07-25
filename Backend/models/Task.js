@@ -45,3 +45,4 @@ const contact= new mongoose.Schema({
 module.exports = mongoose.model('basicinfo', Basicinfo);
 module.exports= mongoose.model('symptoms',symptoms);
 module.exports=mongoose.model('Medicalhistory',medicalhistory);
+module.exports=mongoose.model('Contact',contact);
