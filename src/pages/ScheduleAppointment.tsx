@@ -1,12 +1,12 @@
 import React from "react";
-import { doctors } from "@/lib/doctors";
 import { useNavigate } from "react-router-dom";
+import { doctors } from "@/lib/doctors";
 
 const ScheduleAppointment = () => {
   const navigate = useNavigate();
 
   const handleCardClick = (doctorId: number) => {
-    const isAvailable = doctorId % 2 === 0; // Example logic: even IDs are available
+    const isAvailable = doctorId % 2 === 0;
     if (isAvailable) {
       navigate(`/book/${doctorId}`);
     } else {
@@ -15,8 +15,31 @@ const ScheduleAppointment = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#d0f1ff] to-[#e0f7ff] p-6">
-      <h1 className="text-4xl font-bold text-center text-blue-800 mb-10 drop-shadow-sm">
+    <div className="min-h-screen bg-[#f0faff] p-6">
+      {/* Back Button */}
+      <div className="mb-8 flex justify-start">
+        <button
+          onClick={() => navigate("/patient-dashboard")}
+          className="inline-flex items-center px-5 py-2 bg-[#d0e8f2] text-[#4a90e2] font-medium rounded-xl shadow-md hover:bg-[#e0f0fa] transition"
+        >
+          <svg
+            className="h-5 w-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back to Home
+        </button>
+      </div>
+
+      <h1 className="text-4xl font-bold text-center text-[#4a90e2] mb-10 drop-shadow-sm">
         Schedule an Appointment
       </h1>
 
@@ -25,39 +48,37 @@ const ScheduleAppointment = () => {
           <div
             key={doc.id}
             onClick={() => handleCardClick(doc.id)}
-            className="cursor-pointer backdrop-blur-md bg-white/50 border border-blue-100 shadow-lg rounded-3xl p-6 transition-all hover:scale-[1.02]"
+            className="cursor-pointer bg-white border border-[#d0e8f2] rounded-3xl p-6 shadow-md transition-all hover:shadow-xl hover:scale-[1.02]"
           >
             <div className="flex items-center gap-5 mb-4">
               <img
                 src={doc.profileImage}
                 alt={doc.name}
-                className="w-16 h-16 rounded-full border-4 border-blue-200 shadow-md"
+                className="w-16 h-16 rounded-full border-4 border-[#d0e8f2] shadow-sm"
                 onError={(e) =>
                   (e.currentTarget.src = "https://via.placeholder.com/80?text=Dr")
                 }
               />
               <div>
-                <h2 className="text-xl font-semibold text-blue-800">
+                <h2 className="text-lg font-semibold text-[#4a90e2]">
                   {doc.name}
                 </h2>
-                <p className="text-sm text-blue-600 font-medium">
-                  {doc.specialization}
-                </p>
+                <p className="text-sm text-[#7aa5c9]">{doc.specialization}</p>
               </div>
             </div>
 
-            <div className="bg-white/30 backdrop-blur-sm border border-blue-100 p-4 rounded-xl">
-              <p className="text-sm font-semibold text-blue-700 mb-2">
+            <div className="bg-[#f8fbfd] border border-[#e0f0fa] p-4 rounded-xl">
+              <p className="text-sm font-semibold text-[#4a90e2] mb-2">
                 Available Timings:
               </p>
-              <ul className="text-sm text-blue-600 list-disc pl-5 space-y-1">
+              <ul className="text-sm text-[#7aa5c9] list-disc pl-5 space-y-1">
                 {doc.availableTimings.map((time) => (
                   <li key={time}>{time}</li>
                 ))}
               </ul>
             </div>
 
-            <button className="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold py-2 rounded-xl shadow-md transition-all">
+            <button className="mt-5 w-full bg-gradient-to-r from-[#c2e0f4] to-[#a7d6f2] hover:from-[#b0d6ec] hover:to-[#94c9e9] text-[#004d80] font-medium py-2 rounded-xl shadow transition-all">
               Book Appointment
             </button>
           </div>
