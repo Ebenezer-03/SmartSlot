@@ -21,6 +21,7 @@ import { EmergencyBanner } from '@/components/EmergencyBanner';
 import { ChatBot } from '@/components/ChatBot';
 import { QRScanner } from '@/components/QRScanner';
 import { toast } from '@/hooks/use-toast';
+import {ScheduleAppointment} from '@/components/ScheduleAppointment';
 
 const PatientDashboard = () => {
   const { user, logout } = useAuth();
@@ -229,14 +230,14 @@ const PatientDashboard = () => {
           </Button>
           
           <Button 
-            variant="outline" 
-            size="lg" 
-            onClick={() => toast({ title: "Feature Coming Soon", description: "Appointment scheduling will be available soon" })}
-            className="h-16"
-          >
-            <Calendar className="h-5 w-5 mr-3" />
-            Schedule Appointment
-          </Button>
+  variant="outline" 
+  size="lg" 
+  onClick={() => navigate('/ScheduleAppointment')}
+  className="h-16"
+>
+  <Calendar className="h-5 w-5 mr-3" />
+  Schedule Appointment
+</Button>
           
           <Button 
             variant="outline" 

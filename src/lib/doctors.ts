@@ -1,0 +1,66 @@
+export const doctors = [
+  {
+    id: 1,
+    name: "Dr. John Doe",
+    specialization: "Cardiologist",
+profileImage: "https://randomuser.me/api/portraits/men/1.jpg",
+    availableTimings: ["9:00 AM - 11:00 AM", "2:00 PM - 4:00 PM"],
+  },
+  {
+    id: 2,
+    name: "Dr. Jane Smith",
+    specialization: "Dermatologist",
+profileImage: "https://randomuser.me/api/portraits/men/4.jpg",
+    availableTimings: ["10:00 AM - 12:00 PM", "3:00 PM - 5:00 PM"],
+  },
+  {
+    id: 3,
+    name: "Dr. Ravi Kumar",
+    specialization: "Orthopedic",
+profileImage: "https://randomuser.me/api/portraits/men/16.jpg",
+    availableTimings: ["11:00 AM - 1:00 PM", "4:00 PM - 6:00 PM"],
+  },
+  {
+    id: 4,
+    name: "Dr. Aisha Mehra",
+    specialization: "Pediatrician",
+profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
+    availableTimings: ["8:00 AM - 10:00 AM", "1:00 PM - 3:00 PM"],
+  },
+  {
+    id: 5,
+    name: "Dr. Omar Ali",
+    specialization: "Neurologist",
+profileImage: "https://randomuser.me/api/portraits/men/54.jpg",
+    availableTimings: ["9:30 AM - 11:30 AM", "2:30 PM - 4:30 PM"],
+  },
+  {
+    id: 6,
+    name: "Dr. Neha Sharma",
+    specialization: "Gynecologist",
+   profileImage: "https://randomuser.me/api/portraits/men/19.jpg", 
+    availableTimings: ["10:00 AM - 12:00 PM", "3:00 PM - 5:00 PM"],
+  },
+  {
+    id: 7,
+    name: "Dr. Arjun Patel",
+    specialization: "ENT Specialist",
+   profileImage: "https://randomuser.me/api/portraits/men/78.jpg",
+    availableTimings: ["11:00 AM - 1:00 PM", "4:00 PM - 6:00 PM"],
+  },
+  {
+    id: 8,
+    name: "Dr. Fatima Noor",
+    specialization: "Oncologist",
+profileImage: "https://randomuser.me/api/portraits/women/12.jpg",
+    availableTimings: ["8:30 AM - 10:30 AM", "1:30 PM - 3:30 PM"],
+  },
+  {
+    id: 9,
+    name: "Dr. David Liu",
+    specialization: "Gastroenterologist",
+profileImage: "https://randomuser.me/api/portraits/men/36.jpg",
+    availableTimings: ["9:00 AM - 11:00 AM", "2:00 PM - 4:00 PM"],
+  },
+  
+];

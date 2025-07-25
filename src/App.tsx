@@ -11,6 +11,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
 import TriageForm from "./pages/TriageForm";
 import NotFound from "./pages/NotFound";
+import ScheduleAppointment from "./pages/ScheduleAppointment";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const AppRoutes = () => {
           )
         } 
       />
+      <Route path="/ScheduleAppointment" element={<ScheduleAppointment />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
