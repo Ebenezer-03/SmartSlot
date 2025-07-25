@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Shield, Phone, Mail } from 'lucide-react';
+import { User, HeartPulse, Phone, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -262,7 +262,7 @@ const Login = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
-            <Shield className="h-8 w-8 text-white" />
+            <HeartPulse className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             SmartSlot
