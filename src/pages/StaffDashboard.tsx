@@ -347,10 +347,8 @@ const StaffDashboard = () => {
                     </p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Priority</Label>
-                    <Badge variant={urgencyColors[selectedPatient.urgency]} className="mt-1">
-                      {selectedPatient.urgency}
-                    </Badge>
+                    <Label className="text-sm font-medium">Duration</Label>
+                    <p className="text-sm text-muted-foreground">{selectedPatient.triageData.duration}</p>
                   </div>
                 </div>
 
@@ -362,26 +360,20 @@ const StaffDashboard = () => {
                       <Label>Age</Label>
                       <p className="text-muted-foreground">{selectedPatient.triageData.age} years</p>
                     </div>
-                    <div>
-                      <Label>Pain Level</Label>
-                      <p className="text-muted-foreground">{selectedPatient.triageData.painLevel}/10</p>
-                    </div>
                     {selectedPatient.triageData.temperature && (
                       <div>
                         <Label>Temperature</Label>
                         <p className="text-muted-foreground">{selectedPatient.triageData.temperature}°F</p>
                       </div>
                     )}
-                    <div>
-                      <Label>Duration</Label>
-                      <p className="text-muted-foreground">{selectedPatient.triageData.duration}</p>
-                    </div>
                   </div>
                   
                   <div>
                     <Label>Symptoms</Label>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {selectedPatient.triageData.symptoms.join(', ')}
+                      {[...selectedPatient.triageData.symptoms, selectedPatient.triageData.otherSymptom?.trim()]
+                        .filter(Boolean)
+                        .join(', ') || 'None selected'}
                     </p>
                   </div>
                   

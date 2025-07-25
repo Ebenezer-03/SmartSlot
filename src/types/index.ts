@@ -22,6 +22,7 @@ export interface Patient {
 }
 
 export interface TriageData {
+  name?: string;
   age: number;
   temperature?: number;
   bloodPressure?: string;

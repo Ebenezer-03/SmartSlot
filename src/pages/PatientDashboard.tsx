@@ -112,7 +112,7 @@ const PatientDashboard = () => {
         </div>
 
         {/* Current Status */}
-        {userPatient ? (
+        {userPatient && (
           <Card className="mb-8 bg-gradient-card border-0 shadow-medium">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -123,9 +123,6 @@ const PatientDashboard = () => {
                   </CardTitle>
                   <CardDescription>Real-time queue position and updates</CardDescription>
                 </div>
-                <Badge variant={urgencyColors[userPatient.urgency]} className="text-sm">
-                  {userPatient.urgency} Priority
-                </Badge>
               </div>
             </CardHeader>
             <CardContent>
@@ -164,55 +161,45 @@ const PatientDashboard = () => {
               </div>
             </CardContent>
           </Card>
-        ) : (
-          <Card className="mb-8 bg-gradient-card border-0 shadow-medium">
-            <CardHeader>
-              <CardTitle>No Active Queue Status</CardTitle>
-              <CardDescription>You are not currently in any queue</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => navigate('/triage')} size="lg">
-                Join Queue - Start Triage
-              </Button>
-            </CardContent>
-          </Card>
         )}
 
         {/* Quick Actions & Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-card border-0 shadow-soft hover:shadow-medium transition-shadow">
-            <CardContent className="p-6 text-center">
-              <Users className="h-8 w-8 mx-auto text-primary mb-3" />
-              <div className="text-2xl font-bold mb-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Patients Waiting */}
+          <Card className="bg-gradient-to-br from-blue-100 via-blue-50 to-white border-0 shadow-soft hover:shadow-medium transition-shadow">
+            <CardContent className="p-6 text-center flex flex-col items-center justify-center">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-200 mb-3">
+                <Users className="h-8 w-8 text-blue-600" />
+              </div>
+              <div className="text-4xl font-extrabold text-blue-700 mb-1">
                 {queueData.patients.filter(p => p.status === 'waiting').length}
               </div>
-              <p className="text-sm text-muted-foreground">Patients Waiting</p>
+              <p className="text-base font-medium text-blue-800">Patients Waiting</p>
+              <span className="text-xs text-blue-400 mt-1">Live queue updates</span>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-card border-0 shadow-soft hover:shadow-medium transition-shadow">
-            <CardContent className="p-6 text-center">
-              <Clock className="h-8 w-8 mx-auto text-accent mb-3" />
-              <div className="text-2xl font-bold mb-1">{queueData.averageWaitTime}m</div>
-              <p className="text-sm text-muted-foreground">Avg Wait Time</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-card border-0 shadow-soft hover:shadow-medium transition-shadow">
-            <CardContent className="p-6 text-center">
-              <Heart className="h-8 w-8 mx-auto text-success mb-3" />
-              <div className="text-2xl font-bold mb-1">{queueData.totalServed}</div>
-              <p className="text-sm text-muted-foreground">Patients Served</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-card border-0 shadow-soft hover:shadow-medium transition-shadow">
-            <CardContent className="p-6 text-center">
-              <AlertCircle className="h-8 w-8 mx-auto text-warning mb-3" />
-              <div className="text-2xl font-bold mb-1">
-                {queueData.patients.filter(p => p.urgency === 'High' && p.status === 'waiting').length}
+          {/* Avg Wait Time */}
+          <Card className="bg-gradient-to-br from-green-100 via-green-50 to-white border-0 shadow-soft hover:shadow-medium transition-shadow">
+            <CardContent className="p-6 text-center flex flex-col items-center justify-center">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-green-200 mb-3">
+                <Clock className="h-8 w-8 text-green-600" />
               </div>
-              <p className="text-sm text-muted-foreground">High Priority</p>
+              <div className="text-4xl font-extrabold text-green-700 mb-1">10m</div>
+              <p className="text-base font-medium text-green-800">Avg Wait Time</p>
+              <span className="text-xs text-green-400 mt-1">Estimated for today</span>
+            </CardContent>
+          </Card>
+
+          {/* Patients Served */}
+          <Card className="bg-gradient-to-br from-purple-100 via-purple-50 to-white border-0 shadow-soft hover:shadow-medium transition-shadow">
+            <CardContent className="p-6 text-center flex flex-col items-center justify-center">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-purple-200 mb-3">
+                <Heart className="h-8 w-8 text-purple-600" />
+              </div>
+              <div className="text-4xl font-extrabold text-purple-700 mb-1">{queueData.totalServed}</div>
+              <p className="text-base font-medium text-purple-800">Patients Served</p>
+              <span className="text-xs text-purple-400 mt-1">Since opening</span>
             </CardContent>
           </Card>
         </div>
@@ -226,7 +213,7 @@ const PatientDashboard = () => {
             className="h-16"
           >
             <Heart className="h-5 w-5 mr-3" />
-            New Health Assessment
+            General Consultation
           </Button>
           
           <Button 
@@ -285,16 +272,13 @@ const PatientDashboard = () => {
                       </div>
                       <div>
                         <p className="font-medium">
-                          {patient.phone === user?.phone ? 'You' : patient.tokenNumber}
+                          {patient.name}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           Wait: {patient.estimatedWaitTime}m
                         </p>
                       </div>
                     </div>
-                    <Badge variant={urgencyColors[patient.urgency]} className="text-xs">
-                      {patient.urgency}
-                    </Badge>
                   </div>
                 ))}
               

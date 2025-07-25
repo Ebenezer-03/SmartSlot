@@ -24,7 +24,8 @@ const Login = () => {
   // State for Patient Login tab
   const [patientLoginFormData, setPatientLoginFormData] = useState({
     identifier: '', // Can be email or phone
-    otp: ''
+    otp: '',
+    name: '', // Add name field
   });
   const [patientLoginOtpSent, setPatientLoginOtpSent] = useState(false);
   const [patientLoginLoading, setPatientLoginLoading] = useState(false);
@@ -34,7 +35,8 @@ const Login = () => {
   const [staffLoginFormData, setStaffLoginFormData] = useState({
     email: '',
     password: '',
-    otp: ''
+    otp: '',
+    name: '', // Add name field
   });
   const [staffLoginOtpSent, setStaffLoginOtpSent] = useState(false);
   const [staffLoginLoading, setStaffLoginLoading] = useState(false);
@@ -156,7 +158,7 @@ const Login = () => {
     // Simulate fetching user data based on identifier
     const userData = {
       id: `patient_${Date.now()}`,
-      name: 'Logged-in Patient', // Placeholder name for login flow
+      name: patientLoginFormData.name, // Use entered name
       phone: isPatientEmailLogin ? '' : patientLoginFormData.identifier, // Set phone if it was a phone login
       email: isPatientEmailLogin ? patientLoginFormData.identifier : '', // Set email if it was an email login
       type: 'patient' as const,
@@ -210,16 +212,18 @@ const Login = () => {
       });
       return;
     }
-    // Simulate fetching staff data based on email
+
+    // Simulate fetching staff data based on identifier
     const userData = {
       id: `staff_${Date.now()}`,
-      name: 'Logged-in Staff',
+      name: staffLoginFormData.name, // Use entered name
       phone: '',
       email: staffLoginFormData.email,
       type: 'staff' as const,
-      dob: ''
+      dob: '' // DOB is not collected in this login flow
     };
-    login(userData);
+
+    login(userData); // This should trigger navigation to staff dashboard in a real app
     toast({
       title: "Login Successful",
       description: "Redirecting to Staff Dashboard!",
@@ -335,6 +339,19 @@ const Login = () => {
                 {!patientLoginOtpSent ? (
                   <>
                     <div className="space-y-2">
+                      <Label htmlFor="patient-name" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Name
+                      </Label>
+                      <Input
+                        id="patient-name"
+                        placeholder="Enter your name"
+                        value={patientLoginFormData.name}
+                        onChange={(e) => handlePatientLoginInputChange('name', e.target.value)}
+                        type="text"
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="patient-identifier" className="flex items-center gap-2">
                         <Mail className="h-4 w-4" /> / <Phone className="h-4 w-4" />
                         Email or Mobile Number
@@ -404,6 +421,19 @@ const Login = () => {
               <TabsContent value="staffLogin" className="space-y-4">
                 {!staffLoginOtpSent ? (
                   <>
+                    <div className="space-y-2">
+                      <Label htmlFor="staff-name" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Name
+                      </Label>
+                      <Input
+                        id="staff-name"
+                        placeholder="Enter your name"
+                        value={staffLoginFormData.name}
+                        onChange={(e) => handleStaffLoginInputChange('name', e.target.value)}
+                        type="text"
+                      />
+                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="staff-email" className="flex items-center gap-2">
                         <Mail className="h-4 w-4" />

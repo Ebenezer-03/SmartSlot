@@ -21,6 +21,7 @@ const TriageForm = () => {
   
   const [step, setStep] = useState(1);
   const [triageData, setTriageData] = useState<TriageData>({
+    name: '', // Add name field for patient
     age: 25,
     symptoms: [],
     painLevel: 0,
@@ -50,6 +51,15 @@ const TriageForm = () => {
   const handleSubmit = () => {
     if (!user) return;
 
+    if (!triageData.name.trim()) {
+      toast({
+        title: "Please enter patient name",
+        description: "Name is required to add a patient.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (
       triageData.symptoms.length === 0 &&
       (!triageData.otherSymptom || !triageData.otherSymptom.trim())
@@ -63,7 +73,7 @@ const TriageForm = () => {
     }
 
     const newPatient = addPatient({
-      name: user.name,
+      name: triageData.name,
       phone: user.phone,
       aadhaar: user.aadhaar,
       urgency: 'Low', // Will be calculated by AI
@@ -95,6 +105,15 @@ const TriageForm = () => {
             </div>
 
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="patient-name">Name</Label>
+                <Input
+                  id="patient-name"
+                  placeholder="Enter patient name"
+                  value={triageData.name}
+                  onChange={e => setTriageData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="age">Age</Label>
                 <Input
@@ -288,6 +307,7 @@ const TriageForm = () => {
               <div className="p-4 bg-accent/10 rounded-lg">
                 <h3 className="font-medium mb-2">Review Your Information</h3>
                 <div className="text-sm space-y-1 text-muted-foreground">
+                  <p>Name: {triageData.name}</p>
                   <p>Age: {triageData.age} years</p>
                   <p>Symptoms: {[
                     ...triageData.symptoms,
@@ -321,7 +341,7 @@ const TriageForm = () => {
           </Button>
           
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">AI Health Triage</h1>
+            <h1 className="text-3xl font-bold mb-2">SmartSlot</h1>
             <p className="text-muted-foreground">
               Help our AI system prioritize your care based on your symptoms
             </p>
